@@ -1,0 +1,82 @@
+{
+  "name": "@hollis-labs/plugin-host-runtime",
+  "version": "0.1.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "One shared React for runtime-loaded plugin UIs: a Vite plugin that emits the host import map, the plugin-side externals config, and a browser preflight.",
+  "keywords": [
+    "plugin",
+    "import-map",
+    "vite",
+    "react",
+    "micro-frontend"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hollis-labs/plugin-host-runtime.git"
+  },
+  "homepage": "https://github.com/hollis-labs/plugin-host-runtime#readme",
+  "bugs": {
+    "url": "https://github.com/hollis-labs/plugin-host-runtime/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js"
+    },
+    "./build": {
+      "types": "./dist/build.d.ts",
+      "import": "./dist/build.js"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.js",
+    "test:run": "npm run build && node --test test/*.test.js",
+    "test:matrix": "npm run build && node scripts/matrix.mjs"
+  },
+  "dependencies": {
+    "es-module-shims": "^2.8.0"
+  },
+  "peerDependencies": {
+    "vite": ">=5.4 <9"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "puppeteer-core": "^24.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "~6.0.2",
+    "vite": "^7.3.6"
+  }
+}

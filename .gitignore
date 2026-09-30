@@ -1,0 +1,6 @@
+node_modules
+dist
+.matrix
+*.tsbuildinfo
+*.tgz
+.DS_Store

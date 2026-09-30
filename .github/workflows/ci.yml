@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: typecheck, build, unit tests, pack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: install
+        run: npm ci
+
+      - name: typecheck
+        run: npm run typecheck
+
+      # Build before test: the tests import dist/.
+      - name: build
+        run: npm run build
+
+      - name: unit tests
+        run: npm run test:run
+
+      - name: pack contents
+        run: npm pack --dry-run
+
+      - name: audit (runtime dependencies)
+        run: npm audit --omit=dev
+
+  browser-matrix:
+    name: browser matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: install
+        run: npm ci
+
+      - name: build
+        run: npm run build
+
+      # Present only once plugin-registry is on npm; until then the matrix
+      # prints that the registry integration was SKIPPED (not passed).
+      - name: fetch plugin-registry tarball when published
+        run: |
+          if npm pack @hollis-labs/plugin-registry@0.1.0 --pack-destination "$RUNNER_TEMP" >/dev/null 2>&1; then
+            echo "REGISTRY_TARBALL=$RUNNER_TEMP/hollis-labs-plugin-registry-0.1.0.tgz" >> "$GITHUB_ENV"
+          else
+            echo "plugin-registry 0.1.0 not on npm yet; registry integration will be skipped"
+          fi
+
+      - name: matrix
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: npm run test:matrix
