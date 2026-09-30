@@ -9,3 +9,4 @@ Initial extraction; not published, not tagged.
 - `verifyHostRuntime()`, `hostImportModule()`, `HostRuntimeError`, `checkRuntime()`.
 - Lifted from Flux's `hostImportmapPlugin` by reading; the original was not run. See the README.
 - Real-browser matrix over Vite 5.4.21, 6.4.3, 7.3.1 and 8.3.1.
+- Source maps and declaration maps are not emitted: they pointed at `../src`, which the tarball does not ship.
